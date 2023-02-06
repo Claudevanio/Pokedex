@@ -13,7 +13,6 @@ export const PokemonCard = ({ pokemon, image }) => {
 
   if (!pokemon) return;
   let isLoading = true;
-  debugger
   const bgColorType = colorByType(pokemon.types[0].type.name);
   const imagePoke = getImageURL(pokemon.id);
   isLoading = false;
