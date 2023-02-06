@@ -5,34 +5,62 @@ import { PokeInfo } from "../../components/PokemonModal";
 import { Navbar } from "../../components/Navbar";
 import { Skeletons } from "../../components/Skeletons";
 import { usePokemon } from "../../context/context";
-import { ButtonPagination } from "../../components/Button";
+import { ButtonPaginationArrow } from "../../components/Button/ButtonArrow";
+import { ButtonPaginationNumeric } from "../../components/Button/ButtonNumeric";
 
 export const Home = () => {
-  const { pokemons, loading, nextPage, prevPage, prevUrl } = usePokemon();
+  const { pokemons, selectPage, countPages } = usePokemon();
+  let listPokemons = [];
+
+  if (pokemons.length === 20) {
+    listPokemons = pokemons;
+  }
 
   return (
     <div>
       <Navbar />
       <Container maxWidth="false">
-        {loading ? (
-          <Skeletons />
+        {listPokemons.length === 0 ? (
+          <Grid container>
+            {Array.from({ length: 20 }, (_, index) => (
+              <Grid item xs={12} sm={6} md={3} lg={2} key={index}>
+                <Skeletons />
+              </Grid>
+            ))}
+          </Grid>
         ) : (
           <Grid container spacing={3}>
-            {pokemons.map((pokemon, index) => (
+            {listPokemons.map((pokemon, index) => (
               <Grid item xs={6} sm={4} md={3} lg={2} key={index}>
-                <PokemonCard pokemon={pokemon} loading={loading} />
+                <PokemonCard pokemon={pokemon} />
               </Grid>
             ))}
           </Grid>
         )}
+
         <Stack direction="row" margin={4} justifyContent="center" spacing={1}>
-          <ButtonPagination
-            onClick={(e) => prevPage(e)}
-            hidden={prevUrl === null ? true : false}
-            text="Previous"
+          <ButtonPaginationArrow
+            text="<"
+            hidden={false}
+            currentPage={countPages}
+            onClick={(e) => selectPage(e, countPages - 1)}
           />
-          <ButtonPagination text="Next" onClick={(e) => nextPage(e)} />
+          {Array.from({ length: 20 }, (_, index) => (
+            <ButtonPaginationNumeric
+              onClick={(e) => selectPage(e, index)}
+              text={index + 1}
+              key={index}
+              currentPage={countPages}
+            />
+          ))}
+          <ButtonPaginationArrow
+            text=">"
+            hidden={false}
+            currentPage={countPages}
+            onClick={(e) => selectPage(e, countPages)}
+          />
         </Stack>
+
         <PokeInfo />
       </Container>
     </div>

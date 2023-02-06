@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { usePokemon } from "../../context/context";
 import { Stack } from "@mui/system";
-import { IconButton } from "@mui/material";
+import { CircularProgress, IconButton } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { colorByType, getImageDetailsURL } from "../../utils";
 import { PillPokemonType } from "../PillPokemonType";
@@ -33,11 +33,13 @@ export const PokeInfo = () => {
   const { pokemon, visible } = modalState;
 
   if (!pokemon) return;
+  let isLoading = true;
 
   const { name, id, stats } = pokemon;
 
   const bgColorType = colorByType(pokemon.types[0].type.name);
-
+  const imagePoke = getImageDetailsURL(id);
+  isLoading = false;
   return (
     <div className="modal">
       <Modal
@@ -65,7 +67,6 @@ export const PokeInfo = () => {
             <h1>{name}</h1>
           </Stack>
           <Stack position={"relative"} zIndex={1} marginBottom={-3}>
-
             <Stack position={"absolute"} left="4%">
               {pokemon.types.map((item, index) => (
                 <PillPokemonType
@@ -74,7 +75,18 @@ export const PokeInfo = () => {
                 ></PillPokemonType>
               ))}
             </Stack>
-            <img src={getImageDetailsURL(id)} height="200" alt="pokemonimg" />
+            {isLoading ? (
+              <Box
+                height="200px"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <CircularProgress />
+              </Box>
+            ) : (
+              <img src={imagePoke} height="200" alt="pokemonimg" />
+            )}
           </Stack>
 
           <Box sx={styleStats}>
