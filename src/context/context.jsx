@@ -37,12 +37,21 @@ export function PokemonContextProvider({ children }) {
 
   const selectPage = (e, index) => {
     e.preventDefault();
+
+    console.log(index)
+
+    if (index === countPages - 1) {
+      window.scrollTo(0, 0);
+      return;
+    }
+
     const urlPagination = `https://pokeapi.co/api/v2/pokemon/?limit=20&offset=${
       20 * index
     }`;
     setPokemons([]);
     setUrl(urlPagination);
     setCountPages(index + 1);
+    console.log(`${countPages} Estou aqui`);
   };
 
   const shouldShowButton = (currentButton = 1, buttonIndex) => {
