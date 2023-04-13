@@ -9,8 +9,9 @@ export function PokemonContextProvider({ children }) {
   const [modalState, setmodalState] = useState({ visible: false });
   const [pokemons, setPokemons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon/");
+  const [url, setUrl] = useState("https://localhost:7066/pokemon/");
   const [countPages, setCountPages] = useState(1);
+  const [nextPreviousPage, setNextPreviousPage] = useState({next: -1, previous: -1});
 
   const handleOpenModal = (payload) =>
     setmodalState({ ...payload, visible: true });
@@ -20,6 +21,7 @@ export function PokemonContextProvider({ children }) {
   const fetchAllPokemons = async (url) => {
     setLoading(true);
     const res = await axios.get(url);
+    setNextPreviousPage({next: res.data.next, previous: res.data.previous})
     getPokemon(res.data.results);
     setLoading(false);
   };
@@ -38,14 +40,12 @@ export function PokemonContextProvider({ children }) {
   const selectPage = (e, index) => {
     e.preventDefault();
 
-    console.log(index)
-
     if (index === countPages - 1) {
       window.scrollTo(0, 0);
       return;
     }
 
-    const urlPagination = `https://pokeapi.co/api/v2/pokemon/?limit=20&offset=${
+    const urlPagination = `https://localhost:7066/pokemon/?limit=20&offset=${
       20 * index
     }`;
     setPokemons([]);
@@ -56,9 +56,11 @@ export function PokemonContextProvider({ children }) {
 
   const shouldShowButton = (currentButton = 1, buttonIndex) => {
     let buttonsPerPage = 10;
-
+    
     const startIndex = currentButton - Math.floor(buttonsPerPage / 2);
     const endIndex = startIndex + buttonsPerPage;
+    
+    if (buttonIndex > currentButton && nextPreviousPage.next == null) {return true;}
 
     if (
       currentButton >= 1 &&
@@ -78,11 +80,13 @@ export function PokemonContextProvider({ children }) {
       return false;
     }
 
+    
     if (buttonIndex >= startIndex && buttonIndex < endIndex) {
       return false;
     } else if (true) {
+      return true;
     }
-    return true;
+    
   };
 
   useEffect(() => {
@@ -100,6 +104,7 @@ export function PokemonContextProvider({ children }) {
         pokemons,
         loading,
         countPages,
+        nextPreviousPage,
         handleClose: handleCloseModal,
         handleOpen: handleOpenModal,
         selectPage,

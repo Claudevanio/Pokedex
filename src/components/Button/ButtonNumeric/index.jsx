@@ -2,10 +2,10 @@ import { usePokemon } from "../../../context/context";
 import "./index.css";
 
 export const ButtonPaginationNumeric = ({ onClick, text, currentPage }) => {
-  const { shouldShowButton } = usePokemon();
+  const { shouldShowButton} = usePokemon();
 
   let isCurrentPage = null;
-  const isHidden = shouldShowButton(currentPage, text);
+  let isHidden = shouldShowButton(currentPage, text);
 
   if (currentPage === text) {
     isCurrentPage = "blue";
